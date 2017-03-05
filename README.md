@@ -17,14 +17,14 @@ _YCrCb_ showed the best performance when training the SVM model with various fea
 This technique generates histograms of image intensity gradients within a given block. This is useful in extracting features from a larger image that can be used for various purposes. Its most useful when trying to ascertain shape related aspects from the image.
 
 In this case, we use these to generate features for images of cars, from various angles and lighting conditions. I use [skimage.feature.hog](http://scikit-image.org/docs/0.11.x/api/skimage.feature.html#skimage.feature.hog) function to generate these.
-The code can be seen [here](./src/main/python/utils.py#L17:L35)
+The code can be seen [here](./src/main/python/utils.py#L17:L35).
 
 When used on the an example image like the one shown below.
 
-![Car, Not Car][./examples/car_not_car.png]
+![Car, Not Car](./examples/car_not_car.png)
 
 The hog function results look like the following:
-![HOG Features and YCrCb transformation][./examples/hog_features.png]
+![HOG Features and YCrCb transformation](./examples/hog_features.png)
 
 #### HOG parameters
 I used 8x8 pixels per cell, and 2x2 cells per block for normalization and 9 orientations for generating the examples above. I used the same parameters to generate features for training the SVM model.
