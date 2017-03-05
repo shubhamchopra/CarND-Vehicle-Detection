@@ -60,14 +60,14 @@ class CarDetector:
                               self.spatial_size, self.hist_bins)
             windows.extend(boxes)
 
-        logging.info("Found {} boxes.".format(len(windows)))
+        # logging.info("Found {} boxes.".format(len(windows)))
         self.history.addBoxes(windows)
         return self.history.getWindows(img)
 
     def process_image(self, img):
         bgrImg = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
         windows = self.find_car_windows(bgrImg)
-        logging.info("Num windows detected : {}".format(len(windows)))
+        # logging.info("Num windows detected : {}".format(len(windows)))
         image = np.copy(img)
         for window in windows:
             cv2.rectangle(image, window[0], window[1], (0, 255, 255), 6)
