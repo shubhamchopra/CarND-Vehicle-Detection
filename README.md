@@ -63,11 +63,27 @@ to generate a heat map like the one show below:
 
 We then use `label` from `scipy.ndimage.measurements` to generate labels for the connected components. These are pixels that are _hotter_ than
 a threshold and connected to one another. We can then use these labels to find enclosing boxed around the image. The final image looks like the following:
-![Image with windows](./test5.jpg)
+![Image with windows](./examples/test5.jpg)
 
 * Using information from previous images, when working with videos, like we do here.
 The approach above can still result in false-positives. We try to minimize these by using information from previous frames of a video. A simplistic
 approach is to just collect the boxes from past few images and then use them all together to detect images. This is implemented
 [here](./src/main/python/Main.py#L9:L43).
 
+This ensures that detection near the same places in consecutive frames is used to filter out false positives. When using this,
+we raise the threshold levels appropriately, so we only pick windows that were detected in multiple images.
+
 ###Conclusion
+We experimented with a feature extraction + ML based approach here to detect interesting aspects from a stream of images. In this case,
+we were interested in locating cars. Given the nature of the problem, our detection can only be as good as the training set. It was
+apparent that the classifier appears to do poorly on cars with certain colors, likely due to the colors being absent from the training set.
+
+The road also has a lot of features that are mistaken for cars, particularly around shadows. This is something we cannot get away from, as the
+training set does contain images of cars from different angles and light conditions, and we want to be able to detect those as well. These
+false positives can, however, be handled using a couple of approaches mentioned above. These help reduce false-positives.
+
+Even with these we see some spurious detection, particularly around the shadows. These approaches can be further improved by tracking
+the vehicles that are detected between multiple frames. A potential approach could be to only search for a vehicle around a given region, if
+ there was a high confidence detection in the previous frames.
+
+All in all though, the basic approach shown here does show decent performance that can be improved on.
