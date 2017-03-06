@@ -63,8 +63,8 @@ In this case, I found a scale of 1.5 to work the best and used that for the resu
 * There is a good chance we see false positives, like we do in this image, and multiple positives around cars, like we see here.
 The classifier can be improved to address some of the issue here by adding a more varied set of images for both vehicles and non-vehicles.
 It could also be done by trying more features from existing images. We intend for the classifier to be good at identifying
-_objects_ (in this case cars) by looking at features. Apart from this, false negatives can also be reduce by other approaches as discussed
-in the next section.
+_objects_ (in this case cars) by looking at features, so an embeddings like approach using a simple neural network can also likely be
+applied here. Apart from this, false negatives can also be reduce by other approaches as discussed in the next section.
 
 ###Video implementation and video for noise reduction
 The output video can be seen [here](./project_video_output.mp4).
