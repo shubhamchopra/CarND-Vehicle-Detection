@@ -51,7 +51,8 @@ the same size as the training image and slide this window over the area of inter
 
 The approach basically pulls out a 64x64 section from the area of interest, generates features from this, just like we did in training
 the model and then predicts if this portion contains a car. The window is then moved by 2 cells (where each cell is a 8x8 block, therefore
-the window is moved by 16 pixels) and this exercise is repeated. Once we completely scan the area of interest, we would have (depending on
+the window is moved by 16 pixels) and this exercise is repeated. This results in neighboring windows covering about 75% of the area covered by a window.
+ This showed the best performance in the test images. Once we completely scan the area of interest, we would have (depending on
 the model performance) a number of blocks where we expect the car to be present. An example output image looks like the following:
 
 ![Sliding window](./examples/sliding_window.jpg)
@@ -59,7 +60,11 @@ Several interesting things to note here:
 * We can search a different scales, which is to mean, that we can scale this image and then perform the same windowed search operation.
 In this case, I found a scale of 1.5 to work the best and used that for the result video.
 * We can significantly limit the area of interest in the image, since we only expect cars to be present in the bottom half of the image. In this case, from about 10% to 50% starting from the bottom. This significantly reduces the area that needs to be searched and can improve performance and reduce false positives.
-* There is a good chance we see false positives, like we do in this image, and multiple positives around cars, like we see here. We address these issues in the next section.
+* There is a good chance we see false positives, like we do in this image, and multiple positives around cars, like we see here.
+The classifier can be improved to address some of the issue here by adding a more varied set of images for both vehicles and non-vehicles.
+It could also be done by trying more features from existing images. We intend for the classifier to be good at identifying
+_objects_ (in this case cars) by looking at features. Apart from this, false negatives can also be reduce by other approaches as discussed
+in the next section.
 
 ###Video implementation and video for noise reduction
 The output video can be seen [here](./project_video_output.mp4).
