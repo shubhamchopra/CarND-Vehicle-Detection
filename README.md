@@ -17,7 +17,7 @@ _YCrCb_ showed the best performance when training the SVM model with various fea
 This technique generates histograms of image intensity gradients within a given block. This is useful in extracting features from a larger image that can be used for various purposes. Its most useful when trying to ascertain shape related aspects from the image.
 
 In this case, we use these to generate features for images of cars, from various angles and lighting conditions. I use [skimage.feature.hog](http://scikit-image.org/docs/0.11.x/api/skimage.feature.html#skimage.feature.hog) function to generate these.
-The code can be seen [here](./src/main/python/utils.py#L17:L35).
+The code can be seen [here](./src/main/python/utils.py#L18:L36).
 
 When used on the an example image like the one shown below.
 
@@ -32,8 +32,17 @@ These parameters showed the best performance for the sliding window based featur
 
 ####Additional features to supplement HOG features
 Since cars tend to stand out because of the color and contrast, using both spatial color information and possible a histogram of colors can give good results for classification.
+This is implemented [here](./src/main/python/utils.py#L39:L44)
 
 For spatial color information, I resize the image to a 32x32 pixel image and use all the intensities as a linear vector. This is further supplemented by a 32-bin histogram of all the channels.
+This is implemented [here](./src/main/python/utils.py#L47:L57)
+
+Feature vectors are created by putting these 3 different features together. Since they can be on different scales, we _normalize_ them
+by using a `StandardScaler`. We use the scaler in the detection pipeline as shows [here](./src/main/python/CarDetectionModel.py#L47:L48)
+
+We then fit a linear Support Vector Classifier. We tune parameter C by using 3-fold cross-validation based grid-search.
+This is shown [here](./src/main/python/CarDetectionModel.py#L58:L62). Once the fit is complete, we extract and save the best
+model like shown [here](./src/main/python/CarDetectionModel.py#L64:L77)
 
 ###Sliding window search
 Once a model is trained using the images/features shown above, it can be used on target images using a sliding window. We choose a window of
