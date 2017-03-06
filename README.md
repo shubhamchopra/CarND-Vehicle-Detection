@@ -46,4 +46,28 @@ the window is moved by 16 pixels) and this exercise is repeated. Once we complet
 the model performance) a number of blocks where we expect the car to be present. An example output image looks like the following:
 
 ![Sliding window](./examples/sliding_window.jpg)
+Several interesting things to note here:
+* We can search a different scales, which is to mean, that we can scale this image and then perform the same windowed search operation.
+In this case, I found a scale of 1.5 to work the best and used that for the result video.
+* We can significantly limit the area of interest in the image, since we only expect cars to be present in the bottom half of the image. In this case, from about 10% to 50% starting from the bottom. This significantly reduces the area that needs to be searched and can improve performance and reduce false positives.
+* There is a good chance we see false positives, like we do in this image, and multiple positives around cars, like we see here. We address these issues in the next section.
 
+###Video implementation and video for noise reduction
+The output video can be seen [here](./project_video_output.mp4).
+
+As shown earlier, there can be false positives. There are a few ways to handle this.
+* Using a heat-map based approach
+This is implement [here](./src/main/python/utils.py#L197:L224). We count how many times a pixel appears in one of the windows. We use this
+to generate a heat map like the one show below:
+![Heat map](./examples/bboxes_and_heat.png)
+
+We then use `label` from `scipy.ndimage.measurements` to generate labels for the connected components. These are pixels that are _hotter_ than
+a threshold and connected to one another. We can then use these labels to find enclosing boxed around the image. The final image looks like the following:
+![Image with windows](./test5.jpg)
+
+* Using information from previous images, when working with videos, like we do here.
+The approach above can still result in false-positives. We try to minimize these by using information from previous frames of a video. A simplistic
+approach is to just collect the boxes from past few images and then use them all together to detect images. This is implemented
+[here](./src/main/python/Main.py#L9:L43).
+
+###Conclusion

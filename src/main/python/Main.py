@@ -13,9 +13,15 @@ class WindowHistory:
         self.threshold = threshold
 
     def addBoxes(self, boxList):
+        '''
+        Add the boxes from this image to the history queue
+        :param boxList:
+        :return:
+        '''
         if len(self.history) == self.history_size:
             # drop the oldest box list and append the latest
             self.history = self.history[1:]
+            # append the latest list of boxes
             self.history.append(boxList)
         elif len(self.history) < self.history_size:
             self.history.append(boxList)
@@ -23,9 +29,16 @@ class WindowHistory:
             raise AssertionError("History cannot be more than 10")
 
     def getWindows(self, img):
+        '''
+        Get the windows for the current image
+        :param img:
+        :return:
+        '''
         if len(self.history) < self.history_size:
+            # we don't have sufficient history, so we return nothing
             return []
         else:
+            # we merge windows from all the previous detections and return the merge windows
             boxes = list(itertools.chain.from_iterable(self.history))
             return merge_detected_windows(img, box_list=boxes, threshold=self.threshold)
 
@@ -64,6 +77,19 @@ class CarDetector:
         self.history.addBoxes(windows)
         return self.history.getWindows(img)
 
+    def find_car_windows_test(self, img):
+        imgY = img.shape[0]
+        windows = find_cars(img, np.int(imgY * self.ystart), np.int(imgY * self.ystop), self.cells_per_step,
+                          1.5, self.model, self.orient, self.color_space,
+                          self.pix_per_cell, self.cell_per_block,
+                          self.spatial_size, self.hist_bins)
+
+        image = np.copy(img)
+        for window in windows:
+            cv2.rectangle(image, window[0], window[1], (0, 255, 255), 2)
+        merge_detected_windows(image, windows, 2)
+        return image
+
     def process_image(self, img):
         bgrImg = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
         windows = self.find_car_windows(bgrImg)
@@ -85,9 +111,12 @@ if __name__ == "__main__":
     input = "test_video.mp4"
     output = "test_video_output.mp4"
     mainRunner.process_video(input, output)
-    # for file in glob.glob("test_images/*.jpg"):
+    # for file in glob.glob("test_images/test5.jpg"):
     #     img = mpimg.imread(file)
-    #
-    #     ret = mainRunner.process_image(img)
-    #     outputfile = "output_images/" + file
+    #     ret = mainRunner.find_car_windows_test(img)
+    #     # ret = mainRunner.process_image(img)
+    #     outputfile = "examples/" + "sliding_window.jpg"
     #     mpimg.imsave(outputfile, ret)
+
+
+    
