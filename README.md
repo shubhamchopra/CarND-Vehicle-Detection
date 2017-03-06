@@ -19,7 +19,7 @@ This technique generates histograms of image intensity gradients within a given 
 In this case, we use these to generate features for images of cars, from various angles and lighting conditions. I use [skimage.feature.hog](http://scikit-image.org/docs/0.11.x/api/skimage.feature.html#skimage.feature.hog) function to generate these.
 The code can be seen [here](./src/main/python/utils.py#L18:L36).
 
-When used on the an example image like the one shown below.
+An example of vehicle and non-vehicle image can be seen below:
 
 ![Car, Not Car](./examples/car_not_car.png)
 
